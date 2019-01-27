@@ -1,0 +1,44 @@
+SELECT * FROM SERVERSTATUS;
+
+alter table SERVERSTATUS  add column STATUSTIME timestamp after STATUS;
+
+alter table SERVERSTATUS  add column BACKGROUNDSWITCH integer not null default 0 after SUSPENDSWITCH;
+
+alter table SERVERQUEUE  drop column BACKGROUND;
+
+alter table SERVERQUEUE  add column BACKGROUND integer not null default 0 after OVERRIDEOUTPUTDIR;
+
+alter table SERVERQUEUE  add column RENDERDEVICE CHAR(1) not null default 'D' after BACKGROUND;
+
+DROP INDEX PUBLIC.PRIMARY_KEY_46;
+DROP INDEX PUBLIC.PRIMARY_KEY_5;
+
+CREATE PRIMARY KEY PUBLIC.PRIMARY_KEY_46 ON PUBLIC.SERVERQUEUE(IPADDRESS, FILENAME, OVERRIDEOUTPUTDIR, RENDERDEVICE);
+CREATE PRIMARY KEY PUBLIC.PRIMARY_KEY_5 ON PUBLIC.SERVERQUEUE(IPADDRESS, FILENAME, OVERRIDEOUTPUTDIR, RENDERDEVICE);
+
+select CurrentFile as FileName, 0 as ErrorCount, 0 as rowid, 0 as OverrideOutputDir, 'D' as RenderDevice from ServerStatus where CurrentFile <> '' and IpAddress = '192.168.1.35'
+union 
+select FileName, ErrorCount, rowid, OverrideOutputDir, RenderDevice from ServerQueue where ErrorCount != 1 and IpAddress = '192.168.1.35' 
+Order By ErrorCount, rowid asc
+
+=================================================================
+
+You also need to install the h2-setup-2017-03-10.exe file as it is the the new version of the manual database management tool similar to what we used in FireFox with Sqlite.  Once installed, you will need this for a connection string:
+
+Saved Settings:  (you will select this)
+Generic H2 Embedded
+
+Settings Name: (you will type this and use it in future selects AFTER you save all the settings with the SAVE button)
+SirRender H2 Database  
+
+Driver Class:  (automatically populated based on the first selection)
+org.h2.Driver
+
+JDBC URL:
+jdbc:h2:file:V:/SirRender/databases/SirRenderDb;AUTO_SERVER=TRUE
+
+User Name: (leave blank)
+
+Password:  (leave blank)
+
+=================================================================

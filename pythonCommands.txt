@@ -1,0 +1,23 @@
+Show the number of frames in file
+------------------------------------
+C:\Program Files\Blender Foundation\Blender\2.78\scripts\modules>python blend_render_info.py /tmpBlenderIn/test.blend
+========================================================================================================================
+import sys
+sys.path.append(r'C:\\Program Files\\Blender Foundation\\Blender\\2.78\\scripts\\modules')
+========================================================================================================================
+C:\>blender --background  --python /SirRender/pythonScripts/blend_render_info.py /tmpBlenderIn/test.blend
+Read new prefs: C:\Users\DKubler\AppData\Roaming\Blender Foundation\Blender\2.78\config\userpref.blend
+AL lib: (EE) UpdateDeviceParams: Failed to set 48000hz, got 44100hz instead
+found bundled python: C:\Program Files\Blender Foundation\Blender\2.78\python
+1 250 Scene
+read blend: C:\/tmpBlenderIn/test.blend
+
+Blender quit
+
+C:\>
+========================================================================================================================
+C:\>python /SirRender/pythonScripts/blend_render_info.py /tmpBlenderIn/test.blend
+1 250 Scene
+
+C:\>
+========================================================================================================================

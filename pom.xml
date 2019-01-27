@@ -1,0 +1,157 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>tv.culturesport.master</groupId>
+  <artifactId>SirRender</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  
+  <name>SirRender Server</name>
+  <url>http://maven.apache.org</url>
+  
+	<properties>
+		<jdkVersion>1.8</jdkVersion>
+		<main.basedir>/Users/DaleK/workspace/SirRender</main.basedir>
+		<ci.build.sourceDirectory>src/main/java</ci.build.sourceDirectory>
+		<ci.build.testSourceDirectory>src/test/java</ci.build.testSourceDirectory>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<skipTests>true</skipTests>
+		<log4j.version>1.2.17</log4j.version>
+		<log4j.extras.version>1.2.17</log4j.extras.version>
+		<slf4j.api.version>1.7.7</slf4j.api.version> 
+		<slf4j.log4j12.version>1.7.7</slf4j.log4j12.version> 
+		<sqlite-jdbc.version>1.4.194</sqlite-jdbc.version> 
+		<h2.version>1.4.194</h2.version> 
+		<opencsv.version>3.9</opencsv.version> 
+		<junit.version>3.8.1</junit.version> 
+	</properties>
+
+<build>
+	<finalName>${project.artifactId}</finalName>
+	
+	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-shade-plugin</artifactId>
+			<version>2.4.3</version>
+			<configuration>
+				<descriptorRefs>
+					<descriptorRef>jar-with-jar-dependencies</descriptorRef>
+				</descriptorRefs>
+				<transformers>                                                                                            
+					<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+						<mainClass>tv.culturesport.sirrender.MasterMain</mainClass>
+					</transformer>
+					<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+						<resource>META-INF/spring.handlers</resource>
+					</transformer>
+					<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+						<resource>META-INF/spring.schemas</resource>
+					</transformer>
+				</transformers>
+			</configuration>
+			<executions>
+				<execution>
+					<id>make-shaded-assembly</id>
+					<phase>package</phase>
+					<goals>
+						<goal>shade</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-jar-plugin</artifactId>
+			<version>3.0.2</version>
+			<configuration>
+				<outputDirectory>target/deployment</outputDirectory>
+			</configuration>
+		</plugin>
+		<plugin>
+			<artifactId>maven-resources-plugin</artifactId>
+			<version>3.0.1</version>
+			<executions>
+				<execution>
+					<id>copy-resources-one</id>
+					<phase>validate</phase>
+					<goals>
+						<goal>copy-resources</goal>
+					</goals>
+					<configuration>
+						<outputDirectory>target/deployment</outputDirectory>
+						<resources>
+							<resource>
+								<directory>.</directory>
+								<filtering>true</filtering>
+								<includes>
+									<include>runSirRenderClient.bat</include>
+									<include>runSirRenderServer.bat</include>
+									<include>runSirRenderClientBatch.bat</include>
+									<include>runSirRenderClient.sh</include>
+									<include>runSirRenderServer.sh</include>
+									<include>runSirRenderClientBatch.sh</include>
+									<include>SirRender-Readme.txt</include>
+								</includes>   
+							</resource>
+							<resource>
+								<directory>./target</directory>
+								<filtering>true</filtering>
+								<include>${project.artifactId}.jar</include>
+							</resource>
+						</resources>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+	</plugins>
+  </build>  
+    
+  <dependencies>
+
+	<dependency>
+		<groupId>com.h2database</groupId>
+		<artifactId>h2</artifactId>
+		<version>${h2.version}</version>
+	</dependency>    
+
+	<dependency>
+		<groupId>log4j</groupId>
+		<artifactId>log4j</artifactId>
+		<version>${log4j.version}</version>
+	</dependency>
+
+	<dependency>
+		<groupId>log4j</groupId>
+		<artifactId>apache-log4j-extras</artifactId>
+		<version>${log4j.extras.version}</version>
+	</dependency>
+
+	<dependency>
+	    <groupId>org.slf4j</groupId>
+	   	<artifactId>slf4j-api</artifactId>
+	    <version>${slf4j.api.version}</version>
+	</dependency>
+ 
+	<dependency>
+	    <groupId>org.slf4j</groupId>
+	   	<artifactId>slf4j-log4j12</artifactId>
+	    <version>${slf4j.log4j12.version}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>com.opencsv</groupId>
+		<artifactId>opencsv</artifactId>
+		<version>${opencsv.version}</version>
+	</dependency>
+
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
