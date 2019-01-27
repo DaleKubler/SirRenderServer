@@ -317,7 +317,10 @@ public class MasterMain extends JFrame {
         final SystemTray tray = SystemTray.getSystemTray();
         
         // Create a popup menu components
-        MenuItem aboutItem = new MenuItem("About");
+    	// Remove requirement to display About box three times when quitting
+    	// Replace with a Quit option
+        // MenuItem aboutItem = new MenuItem("About");
+        MenuItem aboutItem = new MenuItem("Quit");
         //CheckboxMenuItem cb1 = new CheckboxMenuItem("Suspend Server");
         //CheckboxMenuItem cb2 = new CheckboxMenuItem("Enable Kill Switch");
     	//CheckboxMenuItem cb3 = new CheckboxMenuItem("Render in Background");
@@ -409,11 +412,18 @@ public class MasterMain extends JFrame {
         //MasterMain.log.debug("before adding action listener");
         aboutItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	// Remove requirement to display About box three times when quitting
+            	// Replace with a Quit option
+            	/*
                 JOptionPane.showMessageDialog(null,
                         ApplicationConstants.SIRRENDER_SERVER_TITLE+"\n\n");
                 // Increment the about exit counter - quit when = 3
                 GlobalClass.setAboutExitCount(GlobalClass.getAboutExitCount() + 1);
                 if (GlobalClass.getAboutExitCount() == 3) {
+                */
+                // Increment the about exit counter - quit when = 1
+                GlobalClass.setAboutExitCount(GlobalClass.getAboutExitCount() + 1);
+                if (GlobalClass.getAboutExitCount() == 1) {
                 	// Change the status to "Off Line" if running in H2 server mode
         			try {
 						H2.updateServerStatus(myName, myIpAddress, "Off Line");
