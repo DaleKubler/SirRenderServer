@@ -96,7 +96,7 @@
     <junit.version>3.8.1</junit.version>
     <opencsv.version>3.9</opencsv.version>
     <slf4j.api.version>1.7.7</slf4j.api.version>
-    <main.basedir>/Users/DaleK/workspace/SirRender</main.basedir>
+    <main.basedir>/Users/DaleK/git/SirRender</main.basedir>
     <slf4j.log4j12.version>1.7.7</slf4j.log4j12.version>
     <h2.version>1.4.194</h2.version>
     <maven.compiler.target>1.8</maven.compiler.target>
