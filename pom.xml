@@ -10,27 +10,25 @@
   <name>SirRender Server</name>
   <url>http://maven.apache.org</url>
   
-	<properties>
-		<jdkVersion>1.8</jdkVersion>
-		<main.basedir>/Users/DaleK/git/SirRender</main.basedir>
-		<ci.build.sourceDirectory>src/main/java</ci.build.sourceDirectory>
-		<ci.build.testSourceDirectory>src/test/java</ci.build.testSourceDirectory>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<skipTests>true</skipTests>
-		<log4j.version>1.2.17</log4j.version>
-		<log4j.extras.version>1.2.17</log4j.extras.version>
-		<slf4j.api.version>1.7.7</slf4j.api.version> 
-		<slf4j.log4j12.version>1.7.7</slf4j.log4j12.version> 
-		<sqlite-jdbc.version>1.4.194</sqlite-jdbc.version> 
-		<h2.version>1.4.194</h2.version> 
-		<opencsv.version>3.9</opencsv.version> 
-		<junit.version>3.8.1</junit.version> 
-	</properties>
+  <properties>
+	<jdkVersion>1.8</jdkVersion>
+	<!--
+	<main.basedir>java_projects\CS\SirRenderProject\SirRender</main.basedir>
+	<main.basedir>/Users/Dale/git/SirRender</main.basedir>
+	<main.basedir>/Users/DKubler/git/SirRender</main.basedir>
+	<main.basedir>/Users/DaleK/git/SirRender</main.basedir>
+	-->
+	<main.basedir>/Users/DaleK/git/SirRender</main.basedir>
+	<ci.build.sourceDirectory>src/main/java</ci.build.sourceDirectory>
+	<ci.build.testSourceDirectory>src/test/java</ci.build.testSourceDirectory>
+	<maven.compiler.target>1.8</maven.compiler.target>
+	<maven.compiler.source>1.8</maven.compiler.source>
+<!--	<log-level>ERROR</log-level>							-->
+	<skipTests>true</skipTests>
+  </properties>
 
 <build>
 	<finalName>${project.artifactId}</finalName>
-	
 	<plugins>
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
@@ -110,47 +108,51 @@
   </build>  
     
   <dependencies>
+    <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
+<!-- 
+    <dependency>
+        <groupId>org.xerial</groupId>
+        <artifactId>sqlite-jdbc</artifactId>
+        <version>3.16.1</version>
+    </dependency>
+-->
 
 	<dependency>
 		<groupId>com.h2database</groupId>
 		<artifactId>h2</artifactId>
-		<version>${h2.version}</version>
+		<version>1.4.194</version>
 	</dependency>    
 
 	<dependency>
-		<groupId>log4j</groupId>
-		<artifactId>log4j</artifactId>
-		<version>${log4j.version}</version>
-	</dependency>
-
-	<dependency>
-		<groupId>log4j</groupId>
-		<artifactId>apache-log4j-extras</artifactId>
-		<version>${log4j.extras.version}</version>
-	</dependency>
-
-	<dependency>
-	    <groupId>org.slf4j</groupId>
-	   	<artifactId>slf4j-api</artifactId>
-	    <version>${slf4j.api.version}</version>
-	</dependency>
- 
-	<dependency>
-	    <groupId>org.slf4j</groupId>
-	   	<artifactId>slf4j-log4j12</artifactId>
-	    <version>${slf4j.log4j12.version}</version>
+	    <groupId>log4j</groupId>
+    	<artifactId>log4j</artifactId>
+	    <version>1.2.17</version>
 	</dependency>
 	
 	<dependency>
 		<groupId>com.opencsv</groupId>
 		<artifactId>opencsv</artifactId>
-		<version>${opencsv.version}</version>
+		<version>3.9</version>
 	</dependency>
+
+<!--     
+	<dependency>
+		<groupId>org.apache.logging.log4j</groupId>
+		<artifactId>log4j-api</artifactId>
+		<version>2.0</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.logging.log4j</groupId>
+		<artifactId>log4j-core</artifactId>
+		<version>2.0</version>
+	</dependency>
+-->
 
     <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>${junit.version}</version>
+        <version>3.8.1</version>
         <scope>test</scope>
     </dependency>
   </dependencies>

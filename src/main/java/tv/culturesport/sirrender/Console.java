@@ -33,7 +33,7 @@ public class Console extends WindowAdapter implements WindowListener, ActionList
 
 	public Console()
 	{
-		MasterMain.log.debug("inside new Console()");
+		//MasterMain.log.debug("inside new Console()");
 		// Create all components and add them
 		frame=new JFrame(ApplicationConstants.SIRRENDER_SERVER_CONSOLE_TITLE);
 		Dimension screenSize=Toolkit.getDefaultToolkit().getScreenSize();

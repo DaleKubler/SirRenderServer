@@ -1253,19 +1253,15 @@ public class H2 {
 				// MasterMain.cb3 is the tray icon status of the Render in Background switch
 				if (MasterMain.cb3.getState()) {
 					if (GlobalClass.isH2ServerMode()) {
-						//writer.write("blender --background \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + myIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " Y");
-						writer.write("blender --background \"" + fileName + "\" --python C:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + myIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " Y");
+						writer.write("blender --background \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + myIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " Y");
 					} else {
-						//writer.write("blender --background \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + masterServerIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " Y");
-						writer.write("blender --background \"" + fileName + "\" --python C:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + masterServerIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " Y");
+						writer.write("blender --background \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + masterServerIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " Y");
 					}
 				} else {
 					if (GlobalClass.isH2ServerMode()) {
-						//writer.write("blender \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + myIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " N");
-						writer.write("blender \"" + fileName + "\" --python C:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + myIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " N");
+						writer.write("blender \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + myIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " N");
 					} else {
-						//writer.write("blender \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + masterServerIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " N");
-						writer.write("blender \"" + fileName + "\" --python C:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + masterServerIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " N");
+						writer.write("blender \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + masterServerIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " N");
 					}
 				}
 				writer.write("\r\n");   // write new line

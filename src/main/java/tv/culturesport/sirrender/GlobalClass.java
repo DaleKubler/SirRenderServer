@@ -17,6 +17,7 @@ public class GlobalClass {
 	private static boolean socketDebug = false;
 	private static boolean serverProtocolDebug = false;
 	private static boolean h2ServerMode = true;
+	private static boolean masterServer = false;
 
 	public static String getServerMasterIpAddress() {
 		return serverMasterIpAddress;
@@ -44,17 +45,17 @@ public class GlobalClass {
 
 	public static Connection getConection() {
 		if (conection == null) {
-			MasterMain.log.debug("conection is null - getting new connection - GlobalClass.getCloseDB=true");
+			//MasterMain.log.debug("conection is null - getting new connection - GlobalClass.getCloseDB=true");
 			setConection(H2.Connector());
 //			setCloseDB(true);
 		} else
 			try {
 				if (conection.isClosed()) {
-					MasterMain.log.debug("conection is closed - getting new connection - GlobalClass.getCloseDB="+closeDB);
+					//MasterMain.log.debug("conection is closed - getting new connection - GlobalClass.getCloseDB="+closeDB);
 					setConection(H2.Connector());
 					//setCloseDB(true);
 				} else {
-					MasterMain.log.debug("conection exists - returning existing conection - GlobalClass.getCloseDB="+closeDB);
+					//MasterMain.log.debug("conection exists - returning existing conection - GlobalClass.getCloseDB="+closeDB);
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -121,6 +122,14 @@ public class GlobalClass {
 
 	public static void setH2ServerMode(boolean h2ServerMode) {
 		GlobalClass.h2ServerMode = h2ServerMode;
+	}
+
+	public static boolean isMasterServer() {
+		return masterServer;
+	}
+
+	public static void setMasterServer(boolean masterServer) {
+		GlobalClass.masterServer = masterServer;
 	}
 
 	public static boolean isServerProtocolDebug() {

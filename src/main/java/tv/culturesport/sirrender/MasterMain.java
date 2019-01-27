@@ -112,9 +112,33 @@ public class MasterMain extends JFrame {
     			}
     		});
             
-        	GlobalClass.setConection(H2.Connector());
-			GlobalClass.setCloseDB(false);
-			H2.purgeStaleServers(myName, myIpAddress);
+    		if (GlobalClass.isMasterServer()) {
+    			GlobalClass.setServerMasterIpAddress(getInitialMasterServerIpAddress());
+    			MasterMain.log.debug("MasterServer IP Address="+GlobalClass.getServerMasterIpAddress());
+    		
+    			//MasterMain.log.debug("Before purge");
+    			//MasterMain.log.debug("myName="+myName);
+    			MasterMain.log.debug("myIpAddress="+myIpAddress);
+    			//MasterMain.log.debug("portStr="+GlobalClass.getPortNumberStr());
+    			//MasterMain.log.debug("port="+GlobalClass.getPortNum());
+	    		if (myIpAddress.equals(GlobalClass.getServerMasterIpAddress()) 
+	    				|| "0.0.0.0".equals(GlobalClass.getServerMasterIpAddress())
+	    				|| GlobalClass.isH2ServerMode()) 
+	    		{
+	    			//MasterMain.log.debug("database call");
+		        	GlobalClass.setConection(H2.Connector());
+	    			H2.purgeStaleServers(myName, myIpAddress);
+	//    			GlobalClass.getConection().close();
+	    		} else {
+	    			//MasterMain.log.debug("network database call");
+	    			H2.netPurgeStaleServers(myName, myIpAddress);
+	    		}
+	    		//MasterMain.log.debug("After purge");
+    		} else {
+	        	GlobalClass.setConection(H2.Connector());
+				GlobalClass.setCloseDB(false);
+    			H2.purgeStaleServers(myName, myIpAddress);
+    		}
 
     		// Pause 2 seconds to allow database work to complete
     		try {
@@ -127,7 +151,20 @@ public class MasterMain extends JFrame {
         	// Verify there are at least 1000 rows in the ServerQueue table
         	// This is to allow for inserts to  the top of the queue
             //MasterMain.log.debug("Before inserting DummyServerQueueFile");
-   			H2.insertDummyServerQueueFile();
+    		if (GlobalClass.isMasterServer()) {
+	    		if (myIpAddress.equals(GlobalClass.getServerMasterIpAddress()) 
+	    				|| "0.0.0.0".equals(GlobalClass.getServerMasterIpAddress()) 
+	    				|| GlobalClass.isH2ServerMode()) 
+	    		{
+	    			//MasterMain.log.debug("database call");
+	    			H2.insertDummyServerQueueFile();
+	    		} else {
+	    			//MasterMain.log.debug("network database call");
+	    			H2.netInsertDummyServerQueueFile();
+	    		}
+    		} else {
+    			H2.insertDummyServerQueueFile();
+    		}
     		//MasterMain.log.debug("After inserting DummyServerQueueFile");
         	//H2.deleteDummyServerQueueFile();
 
@@ -141,7 +178,21 @@ public class MasterMain extends JFrame {
     		
 	        // Determine if the database should be opened on this server and set server status to "Available"
 			//MasterMain.log.debug("Before set server status");
-   			H2.setServerStatus(myName, myIpAddress, "Available");
+    		if (GlobalClass.isMasterServer()) {
+	    		if (myIpAddress.equals(GlobalClass.getServerMasterIpAddress()) 
+	    				|| "0.0.0.0".equals(GlobalClass.getServerMasterIpAddress()) 
+	    				|| GlobalClass.isH2ServerMode()) 
+	    		{
+		    		MasterMain.log.debug("This is the master server - open database connection");
+	    			//MasterMain.log.debug("database call");
+	    			H2.setServerStatus(myName, myIpAddress, "Available");
+	    		} else {
+	    			//MasterMain.log.debug("network database call");
+	    			H2.netSetServerStatus(myName, myIpAddress, "Available", false);
+	    		}
+    		} else {
+    			H2.setServerStatus(myName, myIpAddress, "Available");
+    		}
     		//MasterMain.log.debug("After set server status");
     		
     		// Pause 2 seconds to allow database work to complete

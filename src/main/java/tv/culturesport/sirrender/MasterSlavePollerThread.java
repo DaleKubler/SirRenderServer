@@ -49,59 +49,99 @@ public class MasterSlavePollerThread extends Thread {
 	    	
 	        // Determine if the poller should be running on this server
 	        if (myIpAddress.equals(GlobalClass.getServerMasterIpAddress()) || GlobalClass.isH2ServerMode()) {
-	        	MasterMain.log.debug("Updating server status");
-	        	InetAddress IP = null;
-				try {
-					IP = InetAddress.getLocalHost();
-				} catch (UnknownHostException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-	        	String hostName = IP.getHostName();
-	        	
-	        	String hostIpAddress = null;
-				try {
-					hostIpAddress = Utils.getLowIpAddress();
-				} catch (SocketException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-				// Poll self and update status
-				try {
-					String status = Utils.pollServerStatus(hostName, hostIpAddress, false);
-					H2.validateRenderDbStatus(hostIpAddress);
-				} catch (IOException | SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				// Determine if any of the other servers status should be changed to "Off Line" based upon the StatusTime
-		        // Get server list from database
-		        try {
-					servers = H2.getServerList(false, true);
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} 
-
-		        /*
-				for (int i = 0; i < servers.size(); i++) {
-			    	MasterMain.log.debug("poll server list hostName="+servers.get(i).getServerName());
-			    	MasterMain.log.debug("poll server list hostIpAddress="+servers.get(i).getServerIpAddress());
-				}
-				*/
-
-		        // Loop through the list of servers
-				for (int i = 0; i < servers.size(); i++) {
+	        	if (GlobalClass.isMasterServer()) {
+		        	MasterMain.log.debug("Polling servers");
+		        	
+			        // Get server list from database
+			        try {
+						servers = H2.getServerList(false, true);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} 
+	
+			        /*
+					for (int i = 0; i < servers.size(); i++) {
+				    	MasterMain.log.debug("poll server list hostName="+servers.get(i).getServerName());
+				    	MasterMain.log.debug("poll server list hostIpAddress="+servers.get(i).getServerIpAddress());
+					}
+					*/
+	
+					for (int i = 0; i < servers.size(); i++) {
+						try {
+					    	//MasterMain.log.debug("in polling loop hostName="+servers.get(i).getServerName());
+					    	//MasterMain.log.debug("in polling loop hostIpAddress="+servers.get(i).getServerIpAddress());
+							try {
+								String status = Utils.pollServerStatus(servers.get(i).getServerName(), servers.get(i).getServerIpAddress(), false);
+								//MasterMain.log.debug("pollServerStatus i="+i+"-"+servers.get(i).getServerName()+" ("+servers.get(i).getServerIpAddress()+") status="+status);
+					    	} catch (SocketTimeoutException ste) {
+					    	} catch (ConnectException e) {
+					    	}
+							//MasterMain.log.debug("before H2.validateRenderDbStatus i="+i);
+							//MasterMain.log.debug("servers.get(i).getServerIpAddress()="+servers.get(i).getServerIpAddress());
+							H2.validateRenderDbStatus(servers.get(i).getServerIpAddress());
+							//MasterMain.log.debug("after H2.validateRenderDbStatus i="+i);
+							//MasterMain.log.debug(""+"validateRenderDbStatus="+i);
+						} catch (SQLException | IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+	        	} else {
+		        	MasterMain.log.debug("Updating server status");
+		        	InetAddress IP = null;
 					try {
-						H2.checkServerStatusTimestamp(servers.get(i).getServerName(), servers.get(i).getServerIpAddress());
-					} catch (SQLException e) {
+						IP = InetAddress.getLocalHost();
+					} catch (UnknownHostException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+		        	String hostName = IP.getHostName();
+		        	
+		        	String hostIpAddress = null;
+					try {
+						hostIpAddress = Utils.getLowIpAddress();
+					} catch (SocketException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+					// Poll self and update status
+					try {
+						String status = Utils.pollServerStatus(hostName, hostIpAddress, false);
+						H2.validateRenderDbStatus(hostIpAddress);
+					} catch (IOException | SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				}
+					
+					// Determine if any of the other servers status should be changed to "Off Line" based upon the StatusTime
+			        // Get server list from database
+			        try {
+						servers = H2.getServerList(false, true);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} 
+	
+			        /*
+					for (int i = 0; i < servers.size(); i++) {
+				    	MasterMain.log.debug("poll server list hostName="+servers.get(i).getServerName());
+				    	MasterMain.log.debug("poll server list hostIpAddress="+servers.get(i).getServerIpAddress());
+					}
+					*/
+	
+			        // Loop through the list of servers
+					for (int i = 0; i < servers.size(); i++) {
+						try {
+							H2.checkServerStatusTimestamp(servers.get(i).getServerName(), servers.get(i).getServerIpAddress());
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+	        	}
 	        	
 				try {
 					//MasterMain.log.debug("Sleeping 2 seconds");
@@ -113,13 +153,21 @@ public class MasterSlavePollerThread extends Thread {
 	        }
 
 	        // Determine if the scheduler should be running on this server
-			MasterMain.log.debug("Running scheduler");
-			try {
-				serverScheduleSingle(0);
-			} catch (InterruptedException | SQLException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	        if (myIpAddress.equals(GlobalClass.getServerMasterIpAddress()) || !GlobalClass.isMasterServer()) {
+				MasterMain.log.debug("Running scheduler");
+				try {
+					if (GlobalClass.isMasterServer()) {
+						serverScheduleMain(0);
+					} else {
+						serverScheduleSingle(0);
+					}
+				} catch (InterruptedException | SQLException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        } else {
+	        	MasterMain.log.debug("Skipping the running of the schedule");	        	
+	        }
 	        
 	        // Checkpoint the database as this is the Master Server
 	        if (myIpAddress.equals(GlobalClass.getServerMasterIpAddress()) || GlobalClass.isH2ServerMode()) {

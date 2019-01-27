@@ -43,6 +43,9 @@ public class ServerProtocol {
             theOutput = "Bye.";
         } else if (theInput.toUpperCase().contains(ApplicationConstants.GET_MASTER_SERVER_IP_ADDRESS)) {
 			theOutput = GlobalClass.getServerMasterIpAddress();
+			if (GlobalClass.isMasterServer() && GlobalClass.isServerProtocolDebug()) {
+				MasterMain.log.debug(ApplicationConstants.MASTER_SERVER_IP_ADDRESS+theOutput);
+			}
         } else if (theInput.toUpperCase().contains(ApplicationConstants.RENDER_FILE)) {
 			try {
             	String phrase = theInput.substring(ApplicationConstants.RENDER_FILE.length());

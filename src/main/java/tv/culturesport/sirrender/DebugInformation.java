@@ -12,16 +12,16 @@ public class DebugInformation {
 		if (GlobalClass.isSocketDebug() == true) {
 		  try
 		  {
-		    MasterMain.log.info("Port:                 " + socket.getPort());
-		    MasterMain.log.debug("Canonical Host Name:  " + socket.getInetAddress().getCanonicalHostName());
-		    MasterMain.log.info("Host Address:         " + socket.getInetAddress().getHostAddress());
-		    MasterMain.log.debug("Local Address:        " + socket.getLocalAddress());
-		    MasterMain.log.debug("Local Port:           " + socket.getLocalPort());
-		    MasterMain.log.info("Local Socket Address: " + socket.getLocalSocketAddress());
-		    MasterMain.log.debug("Receive Buffer Size:  " + socket.getReceiveBufferSize());
-		    MasterMain.log.debug("Send Buffer Size:     " + socket.getSendBufferSize());
-		    MasterMain.log.debug("Keep-Alive:           " + socket.getKeepAlive());
-		    MasterMain.log.debug("SO Timeout:           " + socket.getSoTimeout());
+		    MasterMain.log.debug("Port:                 " + socket.getPort());
+//		    MasterMain.log.debug("Canonical Host Name:  " + socket.getInetAddress().getCanonicalHostName());
+		    MasterMain.log.debug("Host Address:         " + socket.getInetAddress().getHostAddress());
+//		    MasterMain.log.debug("Local Address:        " + socket.getLocalAddress());
+//		    MasterMain.log.debug("Local Port:           " + socket.getLocalPort());
+		    MasterMain.log.debug("Local Socket Address: " + socket.getLocalSocketAddress());
+//		    MasterMain.log.debug("Receive Buffer Size:  " + socket.getReceiveBufferSize());
+//		    MasterMain.log.debug("Send Buffer Size:     " + socket.getSendBufferSize());
+//		    MasterMain.log.debug("Keep-Alive:           " + socket.getKeepAlive());
+//		    MasterMain.log.debug("SO Timeout:           " + socket.getSoTimeout());
 		  } catch (Exception e) {
 		    e.printStackTrace();
 		  }

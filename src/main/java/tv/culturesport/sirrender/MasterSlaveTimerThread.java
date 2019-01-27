@@ -31,6 +31,31 @@ public class MasterSlaveTimerThread extends Thread {
 				e.printStackTrace();
 			}
 			
+			if (GlobalClass.isMasterServer()) {
+				//MasterMain.log.debug("MasterSlaveTimerThread timer awoke at " + Utils.getCurrentTimeForLog());
+				MasterMain.log.debug("Current MasterServerIpAddress="+GlobalClass.getServerMasterIpAddress());
+				MasterMain.log.debug( "lastMasterServerPollTime = " + GlobalClass.getLastMasterServerPollTime());
+				//MasterMain.log.debug( "lastPollTime = " + GlobalClass.getLastPollTime());
+				
+				if (GlobalClass.getLastPollTime() != null) {
+		        	//MasterMain.log.debug("Refresh GlobalClass variables");
+					try {
+						newMasterServerIpAddress = MasterMain.getInitialMasterServerIpAddress();
+						if (newMasterServerIpAddress.equals("0.0.0.0")) {
+							MasterMain.log.debug("Unable to ping current MasterServerIpAddress="+GlobalClass.getServerMasterIpAddress());
+						} else {
+							MasterMain.log.debug("Current MasterServerIpAddress="+GlobalClass.getServerMasterIpAddress());
+						}
+					} catch (SocketException | UnknownHostException | SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					// Initialize the timer
+					GlobalClass.setLastPollTime(Utils.getCurrentTime());
+				}
+			}
+
 			// If this is the MasterServer or if running in H2 server mode, open a database connection and set the closeDB indicator
 			// to false to allow the database connection to be reused without having to open and close with each occurrence.
 			if (myIpAddress.equals(GlobalClass.getServerMasterIpAddress()) || GlobalClass.isH2ServerMode()) {
