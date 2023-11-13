@@ -7,6 +7,7 @@ package tv.culturesport.sirrender;
 
 public class ApplicationConstants {
 
+	public static final String DEFAULT_SIRRENDER_LAN_DRIVE = "V";
 	public static final String AWAITING_YOUR_COMMAND = "Awaiting your command...";
 	public static final String DATABASE_UPDATE_OK = "DATABASE_UPDATE_OK";
 	public static final String OVERRIDE_OUTPUT_DIR = " (Override internal Blender output path)";
@@ -16,9 +17,9 @@ public class ApplicationConstants {
 	public static final String RENDER_CMD_FILE = "RENDER_CMD_FILE";
 	public static final String RENDER_FILE = "RENDER_FILE";
 	public static final String FILENAME = "Filename?";
-	public static final String SIRRENDER_SERVER_TITLE = "SirRender Server - Version 2.0";
-	public static final String SIRRENDER_SERVER_CONSOLE_TITLE = "SirRender Server Console - Version 2.0";
-	public static final String SIRRENDER_CLIENT_TITLE = "SirRender GUI Client - Version 2.0\r\n\r\n";
+	public static final String SIRRENDER_SERVER_TITLE = "SirRender Server - Version 2.4";
+	public static final String SIRRENDER_SERVER_CONSOLE_TITLE = "SirRender Server Console - Version 2.4";
+	public static final String SIRRENDER_CLIENT_TITLE = "SirRender Client - Version 2.4\r\n\r\n";
 	public static final String SIRRENDER_CLIENTBATCH_TITLE = "SirRender ClientBatch - Version 2.0\r\n\r\n";
 	public static final String SIRRENDER_MONITOR_TITLE = "SirRender Monitor - Version 2.0\r\n\r\n";
 	public static final String SIRRENDER_SERVER_ANNOUNCE = " reporting for duty\r\n(Ctrl-C to exit server)\n\r\n";
@@ -36,13 +37,17 @@ public class ApplicationConstants {
 	public static final String VALID_COMMANDS = "Valid commands: help, render, quit";
 	public static final String TRY_AGAIN = "Try again.";
 //	public static final String DEFAULT_PATH = "U:\\SirRender\\";
-	public static final String DEFAULT_PATH = "V:\\SirRender\\";
+//	public static final String DEFAULT_PATH = "V:\\SirRender\\";
+	public static final String DEFAULT_PATH = DEFAULT_SIRRENDER_LAN_DRIVE + ":\\SirRender\\";
 //	public static final String DEFAULT_TMP_PATH = "U:\\SirRender\\temp\\";
-	public static final String DEFAULT_TMP_PATH = "V:\\SirRender\\temp\\";
+//	public static final String DEFAULT_TMP_PATH = "V:\\SirRender\\temp\\";
+	public static final String DEFAULT_TMP_PATH = DEFAULT_SIRRENDER_LAN_DRIVE + ":\\SirRender\\temp\\";
 //	public static final String DEFAULT_OUTPUT_PATH = "U:\\SirRender\\tmpBlenderOut\\";
-	public static final String DEFAULT_OUTPUT_PATH = "V:\\SirRender\\tmpBlenderOut\\";
+//	public static final String DEFAULT_OUTPUT_PATH = "V:\\SirRender\\tmpBlenderOut\\";
+	public static final String DEFAULT_OUTPUT_PATH = DEFAULT_SIRRENDER_LAN_DRIVE + ":\\SirRender\\tmpBlenderOut\\";
 //	public static final String DEFAULT_INPUT_PATH = "U:\\SirRender\\tmpBlenderIn\\";
-	public static final String DEFAULT_INPUT_PATH = "V:\\SirRender\\tmpBlenderIn\\";
+//	public static final String DEFAULT_INPUT_PATH = "V:\\SirRender\\tmpBlenderIn\\";
+	public static final String DEFAULT_INPUT_PATH = DEFAULT_SIRRENDER_LAN_DRIVE + ":\\SirRender\\tmpBlenderIn\\";
 	public static final String ENV_SIRRENDER_IP_ADDRESS = "SIRRENDER_IP_ADDRESS";
 	public static final String ENV_SIRRENDER_TMP_PATH = "SIRRENDER_TMP_PATH";
 	public static final String ENV_SIRRENDER_BLENDER_INPUT_PATH = "SIRRENDER_BLENDER_INPUT_PATH";
@@ -80,7 +85,8 @@ public class ApplicationConstants {
 	public static final String LOG_SERVERLOG_MESSAGE = "LOG_SERVERLOG_MESSAGE";
 	public static final String CREATE_SERVERLOG_CSV_FILE = "CREATE_SERVERLOG_CSV_FILE";
 	public static final String DEFAULT_SERVERLOG_CSV_FILE_NAME = "SirRenderLogFile.csv";
-	public static final String DEFAULT_SERVERLOG_CSV_DIRECTORY = "V:\\";
+//	public static final String DEFAULT_SERVERLOG_CSV_DIRECTORY = "V:\\";
+	public static final String DEFAULT_SERVERLOG_CSV_DIRECTORY = DEFAULT_SIRRENDER_LAN_DRIVE + ":\\";
 	public static final String CSV_FILE_EXTENSION = ".csv";
 	public static final String LOG_GET_SERVERLOG_LIST = "LOG_GET_SERVERLOG_LIST";
 	public static final String LOG_GET_SERVERLOG_SERVER_NAME = "LOG_GET_SERVERLOG_SERVER_NAME";

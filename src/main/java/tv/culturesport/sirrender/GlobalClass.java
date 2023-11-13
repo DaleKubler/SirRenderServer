@@ -12,6 +12,7 @@ public class GlobalClass {
 	private static java.sql.Timestamp lastPollTime;
 	private static Connection conection;
 	private static int aboutExitCount = 0;
+	private static int purgeStaleServersCount = 0;
 	private static int portNum = 0;
 	private static boolean closeDB = false;
 	private static boolean socketDebug = false;
@@ -138,6 +139,14 @@ public class GlobalClass {
 
 	public static void setServerProtocolDebug(boolean serverProtocolDebug) {
 		GlobalClass.serverProtocolDebug = serverProtocolDebug;
+	}
+
+	public static final int getPurgeStaleServersCount() {
+		return purgeStaleServersCount;
+	}
+
+	public static final void setPurgeStaleServersCount(int purgeStaleServersCount) {
+		GlobalClass.purgeStaleServersCount = purgeStaleServersCount;
 	}
 
 

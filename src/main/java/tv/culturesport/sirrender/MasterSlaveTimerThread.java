@@ -31,9 +31,11 @@ public class MasterSlaveTimerThread extends Thread {
 				e.printStackTrace();
 			}
 			
+			MasterMain.log.debug("Current MasterServerIpAddress="+GlobalClass.getServerMasterIpAddress());
+
 			if (GlobalClass.isMasterServer()) {
 				//MasterMain.log.debug("MasterSlaveTimerThread timer awoke at " + Utils.getCurrentTimeForLog());
-				MasterMain.log.debug("Current MasterServerIpAddress="+GlobalClass.getServerMasterIpAddress());
+				//MasterMain.log.debug("Current MasterServerIpAddress="+GlobalClass.getServerMasterIpAddress());
 				MasterMain.log.debug( "lastMasterServerPollTime = " + GlobalClass.getLastMasterServerPollTime());
 				//MasterMain.log.debug( "lastPollTime = " + GlobalClass.getLastPollTime());
 				
@@ -128,13 +130,11 @@ public class MasterSlaveTimerThread extends Thread {
 		        }
 			}
 
-			// Determine if U:\SirRender\databases\SirRenderSocketDebug.txt exists
-			// Determine if V:\SirRender\databases\SirRenderSocketDebug.txt exists
+			// Determine if ?:\SirRender\databases\SirRenderSocketDebug.txt exists
 			// If it exists, read the contents
 			GlobalClass.setSocketDebug(Utils.readDebugFile(ApplicationConstants.SIRRENDER_SOCKET_DEBUG));
 
-			// Determine if U:\SirRender\databases\SirRenderServerProtocolDebug.txt exists
-			// Determine if V:\SirRender\databases\SirRenderServerProtocolDebug.txt exists
+			// Determine if ?:\SirRender\databases\SirRenderServerProtocolDebug.txt exists
 			// If it exists, read the contents
 			GlobalClass.setServerProtocolDebug(Utils.readDebugFile(ApplicationConstants.SIRRENDER_SERVER_PROTOCOL_DEBUG));
 

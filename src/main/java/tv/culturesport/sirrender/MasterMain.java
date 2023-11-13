@@ -304,7 +304,10 @@ public class MasterMain extends JFrame {
     	myName = IP.getHostName();
         
         //String icoPath = "U:/SirRender/images/CS-Guy.png";
-        String icoPath = "V:/SirRender/images/CS-Guy.png";
+        //String icoPath = "V:/SirRender/images/CS-Guy.png";
+        //String icoPath = "W:/SirRender/images/CS-Guy.png";
+        //String icoPath = "X:/SirRender/images/CS-Guy.png";
+        String icoPath = ApplicationConstants.DEFAULT_SIRRENDER_LAN_DRIVE+":/SirRender/images/CS-Guy.png";
         //String icoPath = "/resources/CS-Guy.jpg";
 
         final PopupMenu popup = new PopupMenu();
@@ -546,8 +549,7 @@ public class MasterMain extends JFrame {
 		String newMasterServerName = null;
 		String newMasterServerIpAddress = null;
 				
-		// Determine if U:\SirRender\databases\masterServerIpAddress.txt exists
-		// Determine if V:\SirRender\databases\masterServerIpAddress.txt exists
+		// Determine if ?:\SirRender\databases\masterServerIpAddress.txt exists
 		// If it exists, read the contents
 		configFileInput = Utils.readMasterServerFile(ApplicationConstants.MASTER_SERVER_IP_ADDRESS_TXT_FILE);
 

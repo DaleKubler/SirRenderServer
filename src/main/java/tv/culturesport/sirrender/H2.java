@@ -38,7 +38,10 @@ public class H2 {
 				Class.forName("org.h2.Driver");
 				//conn = DriverManager.getConnection("jdbc:h2:file:U:/SirRender/databases/SirRenderDb;AUTO_SERVER=TRUE;TRACE_MAX_FILE_SIZE=2");
 				//conn = DriverManager.getConnection("jdbc:h2:file:U:/SirRender/databases/SirRenderDb;AUTO_SERVER=TRUE");
-				conn = DriverManager.getConnection("jdbc:h2:file:V:/SirRender/databases/SirRenderDb;AUTO_SERVER=TRUE");
+				//conn = DriverManager.getConnection("jdbc:h2:file:V:/SirRender/databases/SirRenderDb;AUTO_SERVER=TRUE");
+				//conn = DriverManager.getConnection("jdbc:h2:file:W:/SirRender/databases/SirRenderDb;AUTO_SERVER=TRUE");
+				//conn = DriverManager.getConnection("jdbc:h2:file:X:/SirRender/databases/SirRenderDb;AUTO_SERVER=TRUE");
+				conn = DriverManager.getConnection("jdbc:h2:file:"+ApplicationConstants.DEFAULT_SIRRENDER_LAN_DRIVE+":/SirRender/databases/SirRenderDb;AUTO_SERVER=TRUE");
 	        	//MasterMain.log.debug("Obtained a database conection");
 				connectionIsNull = false;
 			} catch (JdbcSQLException jde) {
@@ -525,10 +528,15 @@ public class H2 {
 		PreparedStatement preparedStatement = null;
 		String query = "delete from ServerStatus where rowid in (select rowid from ServerStatus where (ServerName=? and IpAddress<>?) "
 				+ "union "
-				+ "select rowid from ServerStatus where (ServerName<>? and IpAddress=?))";
+				+ "select rowid from ServerStatus where (ServerName<>? and IpAddress=?) "
+				+ "union "
+				+ "select rowid from ServerStatus where (ServerName=? and IpAddress=? and RenderTotalFrameCount=0 and Status<>'Available'))";
 		try {
-			MasterMain.log.debug("DELETE stale servers that share the same "
-					+ "ipAddress or machine name as this server from the ServerStatus table.");
+			if (GlobalClass.getPurgeStaleServersCount() == 0) {
+				MasterMain.log.debug("DELETE stale servers that share the same "
+						+ "ipAddress or machine name as this server from the ServerStatus table.");
+				GlobalClass.setPurgeStaleServersCount(1);
+			}
 			//MasterMain.log.debug("query="+query);
 			//MasterMain.log.debug("serverName="+serverName);
 			//MasterMain.log.debug("serverIpAddress="+serverIpAddress);
@@ -541,6 +549,10 @@ public class H2 {
 			preparedStatement.setString(3, serverName);
 			//MasterMain.log.debug("after setString 3");
 			preparedStatement.setString(4, serverIpAddress);
+			//MasterMain.log.debug("after setString 4");
+			preparedStatement.setString(5, serverName);
+			//MasterMain.log.debug("after setString 3");
+			preparedStatement.setString(6, serverIpAddress);
 			//MasterMain.log.debug("after setString 4");
 			//MasterMain.log.debug("before exucuteUpdate");
 			preparedStatement.executeUpdate();
@@ -694,7 +706,7 @@ public class H2 {
 			Connection conection = GlobalClass.getConection();
 			//conection.setAutoCommit(false);
 			PreparedStatement preparedStatement = null;
-			String query = "UPDATE ServerStatus set currentFrame = ?, TimeStamp=?, renderFrameCount=renderFrameCount + 1 where IpAddress = ?";
+			String query = "UPDATE ServerStatus set currentFrame = ?, TimeStamp=?, renderFrameCount=renderFrameCount + 1, renderTotalFrameCount=renderTotalFrameCount + 1  where IpAddress = ?";
 			try {
 				preparedStatement = conection.prepareStatement(query);
 				preparedStatement.setInt(1, frameNumber);
@@ -740,7 +752,8 @@ public class H2 {
 			Connection conection = GlobalClass.getConection();
 			//conection.setAutoCommit(false);
 			PreparedStatement preparedStatement = null;
-			String query = "UPDATE ServerStatus SET frameStart=0, frameEnd=0, frameCount=0, currentFrame=0, currentFile='', renderEnd=?, renderTotalFrameCount=renderTotalFrameCount + renderFrameCount WHERE iPaddress = ?";
+			//String query = "UPDATE ServerStatus SET frameStart=0, frameEnd=0, frameCount=0, currentFrame=0, currentFile='', renderEnd=?, renderTotalFrameCount=renderTotalFrameCount + renderFrameCount WHERE iPaddress = ?";
+			String query = "UPDATE ServerStatus SET frameStart=0, frameEnd=0, frameCount=0, currentFrame=0, currentFile='', renderEnd=? WHERE iPaddress = ?";
 			try {
 				preparedStatement = conection.prepareStatement(query);
 				preparedStatement.setTimestamp(1, Utils.getCurrentTime());
@@ -1031,9 +1044,9 @@ public class H2 {
 		Connection conection = GlobalClass.getConection();
 		//conection.setAutoCommit(false);
 		PreparedStatement preparedStatement = null;
-		String query = "UPDATE ServerQueue SET ErrorCount=ErrorCount + 1 WHERE iPaddress = ? AND FileName = ? and OverrideOutputDir = ? and RenderDevice = ?";
+		String query1 = "UPDATE ServerQueue SET ErrorCount=ErrorCount + 1 WHERE iPaddress = ? AND FileName = ? AND OverrideOutputDir = ? AND RenderDevice = ?";
 		try {
-			preparedStatement = conection.prepareStatement(query);
+			preparedStatement = conection.prepareStatement(query1);
 			preparedStatement.setString(1, serverIpAddress);
 			preparedStatement.setString(2, fileName);
 			preparedStatement.setInt(3, overrideOutputDir);
@@ -1042,11 +1055,24 @@ public class H2 {
 			//conection.commit();
 		} catch (Exception e) {
 			//conection.rollback();
+//		} finally {
+//			close(null, preparedStatement, conection); 
+//			//MasterMain.log.debug("Ending updateServerQueueErrorCount");
+		}
+
+		preparedStatement = null;
+		String query2 = "DELETE FROM ServerQueue WHERE trim(FileName) = ''";
+		try {
+			preparedStatement = conection.prepareStatement(query2);
+			preparedStatement.executeUpdate();
+			//conection.commit();
+		} catch (Exception e) {
+			//conection.rollback();
 		} finally {
 			close(null, preparedStatement, conection); 
 			//MasterMain.log.debug("Ending updateServerQueueErrorCount");
 		}
-	}
+}
 
 	public static synchronized void decreaseServerQueueErrorCount(String serverIpAddress, String fileName, int overrideOutputDir, String overrideRenderDevice) throws SQLException {
 		//MasterMain.log.debug("Starting updateServerQueueErrorCount");
@@ -1115,6 +1141,28 @@ public class H2 {
 					preparedStatement.setString(3, serverIpAddress);
 					//MasterMain.log.debug("YYYserverIpAddress="+serverIpAddress+"|");
 				}
+			}
+			preparedStatement.executeUpdate();
+			//conection.commit();
+		} catch (Exception e) {
+			//conection.rollback();
+//		} finally {
+//			close(null, preparedStatement, conection); 
+//			//MasterMain.log.debug("Ending deleteServerQueueFile");
+		}
+		
+		preparedStatement = null;
+		if (serverIpAddress.equals("0.0.0.0")) {
+			query = "DELETE FROM ServerQueue WHERE trim(FileName) = ''";
+		} else {
+			query = "DELETE FROM ServerQueue WHERE trim(FileName) = '' AND IpAddress = ?";
+		}
+		try {
+			//MasterMain.log.debug("query="+query);
+			preparedStatement = conection.prepareStatement(query);
+			if (!serverIpAddress.equals("0.0.0.0")) {
+				preparedStatement.setString(1, serverIpAddress);
+				//MasterMain.log.debug("XXXserverIpAddress="+serverIpAddress+"|");
 			}
 			preparedStatement.executeUpdate();
 			//conection.commit();
@@ -1191,15 +1239,28 @@ public class H2 {
 		}
 		MasterMain.log.debug("Temporary File Actual path: "+tempOutputPath);
 
-		fileName = theInput;
-		
-		if (fileName != ""){
-			//MasterMain.log.debug("6");
+		//MasterMain.log.debug("6");
+		// creates temporary file
+		tmpFileName = ApplicationConstants.DEFAULT_TMP_PATH + ApplicationConstants.TMP_FILE_PREFIX + myIpAddress + ApplicationConstants.TMP_FILE_EXTENSION;
+		try{
+			//Delete if tempFile exists
+			File fileTemp = new File(tmpFileName);
+			if (fileTemp.exists()){
+				fileTemp.delete();
+			}   
+		}catch(Exception e){
+			// if any error occurs
+			e.printStackTrace();
+		}
+			
+		// MasterMain.cb3 is the tray icon status of the Render in Background switch
+		// Currently the if and the else statements are identical
+		if (MasterMain.cb3.getState()) {
 			// creates temporary file
-			tmpFileName = ApplicationConstants.DEFAULT_TMP_PATH + ApplicationConstants.TMP_FILE_PREFIX + myIpAddress + ApplicationConstants.TMP_FILE_EXTENSION;
+			tmpFileNameVbs = ApplicationConstants.DEFAULT_TMP_PATH + ApplicationConstants.TMP_FILE_PREFIX + myIpAddress + ApplicationConstants.VBS_FILE_EXTENSION;
 			try{
 				//Delete if tempFile exists
-				File fileTemp = new File(tmpFileName);
+				File fileTemp = new File(tmpFileNameVbs);
 				if (fileTemp.exists()){
 					fileTemp.delete();
 				}   
@@ -1207,37 +1268,39 @@ public class H2 {
 				// if any error occurs
 				e.printStackTrace();
 			}
-				
-			// MasterMain.cb3 is the tray icon status of the Render in Background switch
-			// Currently the if and the else statements are identical
-			if (MasterMain.cb3.getState()) {
-				// creates temporary file
-				tmpFileNameVbs = ApplicationConstants.DEFAULT_TMP_PATH + ApplicationConstants.TMP_FILE_PREFIX + myIpAddress + ApplicationConstants.VBS_FILE_EXTENSION;
-				try{
-					//Delete if tempFile exists
-					File fileTemp = new File(tmpFileNameVbs);
-					if (fileTemp.exists()){
-						fileTemp.delete();
-					}   
-				}catch(Exception e){
-					// if any error occurs
-					e.printStackTrace();
-				}
-			} else {
-				// creates temporary file
-				tmpFileNameVbs = ApplicationConstants.DEFAULT_TMP_PATH + ApplicationConstants.TMP_FILE_PREFIX + myIpAddress + ApplicationConstants.VBS_FILE_EXTENSION;
-				try{
-					//Delete if tempFile exists
-					File fileTemp = new File(tmpFileNameVbs);
-					if (fileTemp.exists()){
-						fileTemp.delete();
-					}   
-				}catch(Exception e){
-					// if any error occurs
-					e.printStackTrace();
-				}
+		} else {
+			// creates temporary file
+			tmpFileNameVbs = ApplicationConstants.DEFAULT_TMP_PATH + ApplicationConstants.TMP_FILE_PREFIX + myIpAddress + ApplicationConstants.VBS_FILE_EXTENSION;
+			try{
+				//Delete if tempFile exists
+				File fileTemp = new File(tmpFileNameVbs);
+				if (fileTemp.exists()){
+					fileTemp.delete();
+				}   
+			}catch(Exception e){
+				// if any error occurs
+				e.printStackTrace();
 			}
-				
+		}
+		
+		Connection conection = GlobalClass.getConection();
+		//conection.setAutoCommit(false);
+		PreparedStatement preparedStatement = null;
+		String query = "DELETE FROM ServerQueue WHERE trim(FileName) = ''";
+		try {
+			preparedStatement = conection.prepareStatement(query);
+			preparedStatement.executeUpdate();
+			//conection.commit();
+		} catch (Exception e) {
+			//conection.rollback();
+		} finally {
+			close(null, preparedStatement, conection); 
+			//MasterMain.log.debug("Ending updateServerQueueErrorCount");
+		}
+
+		fileName = theInput;
+		
+		if (!fileName.trim().isEmpty()){
 			try {
 				FileWriter writer = new FileWriter(tmpFileName, true);
 				//writer.write("java -jar " + ApplicationConstants.DEFAULT_PATH + "SirRender.jar clientserverstatus " + fileName);
@@ -1253,15 +1316,19 @@ public class H2 {
 				// MasterMain.cb3 is the tray icon status of the Render in Background switch
 				if (MasterMain.cb3.getState()) {
 					if (GlobalClass.isH2ServerMode()) {
-						writer.write("blender --background \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + myIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " Y");
+						//writer.write("blender --background \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + myIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " Y");
+						writer.write("blender --background \"" + fileName + "\" --python "+ApplicationConstants.DEFAULT_SIRRENDER_LAN_DRIVE+":\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + myIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " Y");
 					} else {
-						writer.write("blender --background \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + masterServerIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " Y");
+						//writer.write("blender --background \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + masterServerIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " Y");
+						writer.write("blender --background \"" + fileName + "\" --python "+ApplicationConstants.DEFAULT_SIRRENDER_LAN_DRIVE+":\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + masterServerIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " Y");
 					}
 				} else {
 					if (GlobalClass.isH2ServerMode()) {
-						writer.write("blender \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + myIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " N");
+						//writer.write("blender \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + myIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " N");
+						writer.write("blender \"" + fileName + "\" --python "+ApplicationConstants.DEFAULT_SIRRENDER_LAN_DRIVE+":\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + myIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " N");
 					} else {
-						writer.write("blender \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + masterServerIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " N");
+						//writer.write("blender \"" + fileName + "\" --python V:\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + masterServerIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " N");
+						writer.write("blender \"" + fileName + "\" --python "+ApplicationConstants.DEFAULT_SIRRENDER_LAN_DRIVE+":\\SirRender\\pythonScripts\\renderDbUpdate.py -- " + masterServerIpAddress + " " + GlobalClass.getPortNumberStr() + " " + overrideOutputDir + " " + overrideRenderDevice + " N");
 					}
 				}
 				writer.write("\r\n");   // write new line
@@ -1906,7 +1973,7 @@ public class H2 {
 		ResultSet resultSet = null;
 		query = "select CurrentFile as FileName, 0 as ErrorCount, 0 as rowid, 0 as OverrideOutputDir, 'D' as RenderDevice from ServerStatus where CurrentFile <> '' and LENGTH(TRIM(CurrentFile)) > 0 and IpAddress = ? " +
 				"union " +
-				"select FileName, ErrorCount, rowid, OverrideOutputDir, RenderDevice from ServerQueue where IpAddress = ? " + 
+				"select FileName, ErrorCount, rowid, OverrideOutputDir, RenderDevice from ServerQueue where IpAddress = ? and trim(FileName) <> ''" + 
 				"Order By ErrorCount, rowid asc";
 		try {
 			preparedStatement = conection.prepareStatement(query);

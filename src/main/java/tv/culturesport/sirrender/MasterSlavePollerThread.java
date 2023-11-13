@@ -36,14 +36,23 @@ public class MasterSlavePollerThread extends Thread {
 	    List<Server> servers = new ArrayList<Server>();
 	
 	    String myIpAddress = "";
+/*
 		try {
 			myIpAddress = Utils.getLowIpAddress();
 		} catch (SocketException e3) {
 			// TODO Auto-generated catch block
 			e3.printStackTrace();
 		}
-	
+*/
+	    
 	    while (true) {
+			try {
+				myIpAddress = Utils.getLowIpAddress();
+			} catch (SocketException e3) {
+				// TODO Auto-generated catch block
+				e3.printStackTrace();
+			}
+
 	    	// Get start time
 	    	Long startTime = Utils.getCurrentTime().getTime();
 	    	
@@ -89,6 +98,7 @@ public class MasterSlavePollerThread extends Thread {
 					}
 	        	} else {
 		        	MasterMain.log.debug("Updating server status");
+		        	
 		        	InetAddress IP = null;
 					try {
 						IP = InetAddress.getLocalHost();
@@ -98,6 +108,13 @@ public class MasterSlavePollerThread extends Thread {
 					}
 					
 		        	String hostName = IP.getHostName();
+
+		        	try {
+						H2.purgeStaleServers(hostName, myIpAddress);
+					} catch (SQLException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
 		        	
 		        	String hostIpAddress = null;
 					try {
@@ -152,6 +169,12 @@ public class MasterSlavePollerThread extends Thread {
 				}
 	        }
 
+	        // Determine if the local IP Address has changed.  If so, update the MasterIpAddress
+	    	if (!myIpAddress.equals(GlobalClass.getServerMasterIpAddress())) {
+				MasterMain.log.debug("Changing MasterServerIpAddress from "+GlobalClass.getServerMasterIpAddress()+" to "+myIpAddress);
+	    		GlobalClass.setServerMasterIpAddress(myIpAddress);
+	    	}
+	    
 	        // Determine if the scheduler should be running on this server
 	        if (myIpAddress.equals(GlobalClass.getServerMasterIpAddress()) || !GlobalClass.isMasterServer()) {
 				MasterMain.log.debug("Running scheduler");
