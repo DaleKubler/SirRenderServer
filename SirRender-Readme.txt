@@ -86,7 +86,7 @@ Driver Class:  (automatically populated based on the first selection)
 org.h2.Driver
 
 JDBC URL:
-jdbc:h2:file:V:/SirRender/databases/SirRenderDb;AUTO_SERVER=TRUE
+jdbc:h2:file:V:/SirRender2/databases/SirRender2Db;
 
 User Name: (leave blank)
 

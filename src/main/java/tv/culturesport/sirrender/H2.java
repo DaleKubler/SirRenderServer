@@ -41,7 +41,7 @@ public class H2 {
 				//conn = DriverManager.getConnection("jdbc:h2:file:V:/SirRender/databases/SirRenderDb;AUTO_SERVER=TRUE");
 				//conn = DriverManager.getConnection("jdbc:h2:file:W:/SirRender/databases/SirRenderDb;AUTO_SERVER=TRUE");
 				//conn = DriverManager.getConnection("jdbc:h2:file:X:/SirRender/databases/SirRenderDb;AUTO_SERVER=TRUE");
-				conn = DriverManager.getConnection("jdbc:h2:file:"+ApplicationConstants.DEFAULT_SIRRENDER_LAN_DRIVE+":/SirRender/databases/SirRenderDb;AUTO_SERVER=TRUE");
+				conn = DriverManager.getConnection("jdbc:h2:file:"+ApplicationConstants.DEFAULT_SIRRENDER_LAN_DRIVE+":/SirRender2/databases/SirRender2Db;AUTO_SERVER=TRUE");
 	        	//MasterMain.log.debug("Obtained a database conection");
 				connectionIsNull = false;
 			} catch (JdbcSQLException jde) {
